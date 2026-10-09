@@ -6,6 +6,13 @@ import argparse
 import getpass
 import os
 import sys
+
+# Garante saída UTF-8 no console (emojis quebram no cp1252 do Windows).
+try:
+    sys.stdout.reconfigure(encoding="utf-8")
+except (AttributeError, ValueError):
+    pass
+
 from file_crypto import FileCrypto, generate_random_password
 
 
