@@ -3,7 +3,15 @@
 Exemplos de uso e testes básicos para o sistema de criptografia
 """
 import os
+import sys
 import tempfile
+
+# Garante saída UTF-8 no console (emojis quebram no cp1252 do Windows).
+try:
+    sys.stdout.reconfigure(encoding="utf-8")
+except (AttributeError, ValueError):
+    pass
+
 from file_crypto import FileCrypto, generate_random_password
 
 
@@ -169,7 +177,12 @@ def teste_arquivo_grande():
         
         # Mede tempo de descriptografia
         inicio = time.time()
-        arquivo_descriptografado = crypto.decrypt_file(arquivo_criptografado, senha)
+        # Caminho de saída explícito e distinto do original, senão o default
+        # do decrypt_file recria o mesmo caminho de 'arquivo_grande' (tornando
+        # a verificação de integridade trivial e causando unlink duplicado).
+        arquivo_descriptografado = crypto.decrypt_file(
+            arquivo_criptografado, senha, arquivo_grande + ".dec"
+        )
         tempo_descriptografia = time.time() - inicio
         
         # Verifica integridade
